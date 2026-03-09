@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>J.P. Bergman — Independent Mortgage Broker · Melbourne</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+
+:root{
+  --bg:        #1a1714;
+  --bg2:       #201d19;
+  --bg3:       #251f1a;
+  --panel:     #2a2420;
+  --gold:      #c9a84c;
+  --gold-light:#e2c87a;
+  --gold-dim:  #8b6914;
+  --gold-glow: rgba(201,168,76,0.12);
+  --cream:     #f0e8d8;
+  --cream-dim: #b8a98c;
+  --muted:     #7a6e5e;
+  --border:    rgba(201,168,76,0.14);
+  --border-soft:rgba(201,168,76,0.07);
+}
+
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--cream-dim);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* ── GRAIN OVERLAY ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:999;opacity:0.5;
+}
+
+/* ── CURSOR GLOW ── */
+#glow{
+  position:fixed;width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle,rgba(201,168,76,0.06),transparent 70%);
+  pointer-events:none;z-index:998;
+  transform:translate(-50%,-50%);
+  transition:transform 0.05s;
+}
+
+/* ─────────────────── NAV ─────────────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 3.5rem;height:72px;
+  background:rgba(26,23,20,0.92);
+  backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border-soft);
+  transition:background 0.4s;
+}
+nav.scrolled{background:rgba(26,23,20,0.98)}
+.nav-brand{
+  font-family:'Playfair Display',serif;
+  font-size:1.1rem;font-weight:600;letter-spacing:0.04em;
+  color:var(--cream);text-decoration:none;
+}
+.nav-brand span{color:var(--gold)}
+.nav-links{display:flex;align-items:center;gap:2.5rem}
+.nav-link{
+  font-size:0.78rem;font-weight:400;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--muted);text-decoration:none;
+  position:relative;transition:color 0.25s;
+}
+.nav-link::after{
+  content:'';position:absolute;bottom:-3px;left:0;right:100%;height:1px;
+  background:var(--gold);transition:right 0.3s;
+}
+.nav-link:hover{color:var(--gold)}
+.nav-link:hover::after{right:0}
+.nav-cta{
+  font-size:0.75rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--bg);background:var(--gold);
+  padding:0.6rem 1.6rem;text-decoration:none;
+  transition:background 0.25s,transform 0.2s;
+}
+.nav-cta:hover{background:var(--gold-light);transform:translateY(-1px)}
+
+/* HAMBURGER */
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none}
+.hamburger span{width:24px;height:1px;background:var(--cream-dim);transition:all 0.3s;display:block}
+.hamburger.open span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+.mobile-menu{
+  display:none;position:fixed;top:72px;left:0;right:0;z-index:99;
+  background:rgba(26,23,20,0.98);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:2rem 2rem;flex-direction:column;gap:1.5rem;
+}
+.mobile-menu.open{display:flex}
+.mobile-menu .nav-link{font-size:0.9rem}
+
+/* ─────────────────── HERO ─────────────────── */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  justify-content:flex-end;padding:0 3.5rem 7rem;
+  position:relative;overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 70% 40%,rgba(201,168,76,0.05) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 80% at 20% 80%,rgba(201,168,76,0.04) 0%,transparent 60%),
+    linear-gradient(160deg,#1a1714 0%,#201d19 50%,#1e1a16 100%);
+  pointer-events:none;
+}
+.hero-rule{
+  position:absolute;top:0;left:3.5rem;
+  width:1px;height:100%;
+  background:linear-gradient(to bottom,transparent,var(--border),transparent);
+}
+.hero-inner{position:relative;z-index:1;max-width:760px}
+.hero-eyebrow{
+  font-size:0.7rem;font-weight:400;letter-spacing:0.3em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:2.5rem;
+  display:flex;align-items:center;gap:16px;
+  opacity:0;animation:fadeUp 1s 0.2s ease both;
+}
+.eyebrow-line{width:32px;height:1px;background:var(--gold-dim)}
+.hero h1{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(3.2rem,6.5vw,6rem);
+  font-weight:500;line-height:1.08;letter-spacing:-0.01em;
+  color:var(--cream);margin-bottom:2rem;
+  opacity:0;animation:fadeUp 1.1s 0.4s ease both;
+}
+.hero h1 em{color:var(--gold);font-style:italic}
+.hero-sub{
+  font-size:1rem;font-weight:300;line-height:1.85;color:var(--cream-dim);
+  max-width:520px;margin-bottom:3.5rem;
+  opacity:0;animation:fadeUp 1s 0.7s ease both;
+}
+.hero-actions{
+  display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;
+  opacity:0;animation:fadeUp 1s 0.9s ease both;
+}
+.btn-primary{
+  font-size:0.78rem;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--bg);background:var(--gold);
+  padding:1rem 2.5rem;text-decoration:none;
+  transition:background 0.25s,box-shadow 0.25s,transform 0.2s;
+  box-shadow:0 8px 32px rgba(201,168,76,0.2);
+}
+.btn-primary:hover{background:var(--gold-light);box-shadow:0 12px 40px rgba(201,168,76,0.35);transform:translateY(-2px)}
+.btn-secondary{
+  font-size:0.78rem;font-weight:400;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--cream-dim);text-decoration:none;
+  border-bottom:1px solid var(--muted);padding-bottom:2px;
+  transition:color 0.25s,border-color 0.25s;
+}
+.btn-secondary:hover{color:var(--gold);border-color:var(--gold)}
+
+.hero-scroll{
+  position:absolute;bottom:2.5rem;right:3.5rem;
+  font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);
+  display:flex;align-items:center;gap:10px;
+  opacity:0;animation:fadeUp 1s 1.3s ease both;
+}
+.scroll-line{width:40px;height:1px;background:var(--muted)}
+
+/* ─────────────────── TICKER ─────────────────── */
+.ticker{
+  overflow:hidden;background:var(--bg2);
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  padding:1rem 0;
+}
+.ticker-track{
+  display:flex;gap:0;white-space:nowrap;
+  animation:ticker 30s linear infinite;
+}
+.ticker-track:hover{animation-play-state:paused}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{
+  padding:0 3rem;
+  font-size:0.75rem;font-weight:400;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--muted);display:inline-flex;align-items:center;gap:2.5rem;
+}
+.ticker-sep{color:var(--gold);font-size:0.5rem}
+
+/* ─────────────────── SHARED SECTION ─────────────────── */
+.section{padding:120px 3.5rem;position:relative}
+.section-inner{max-width:1160px;margin:0 auto}
+.section-label{
+  font-size:0.65rem;font-weight:400;letter-spacing:0.3em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:1.5rem;
+  display:flex;align-items:center;gap:14px;
+}
+.section-label::before{content:'';width:28px;height:1px;background:var(--gold-dim)}
+.section-h2{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2rem,3.5vw,3.2rem);font-weight:500;
+  color:var(--cream);letter-spacing:-0.01em;line-height:1.18;
+  margin-bottom:1.5rem;
+}
+.section-h2 em{color:var(--gold);font-style:italic}
+.section-body{font-size:0.95rem;font-weight:300;line-height:1.85;color:var(--cream-dim);max-width:540px}
+
+/* ─────────────────── STATS ─────────────────── */
+.stats-bg{background:var(--bg2);border-top:1px solid var(--border-soft);border-bottom:1px solid var(--border-soft)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.stat{
+  padding:4rem 2.5rem;border-right:1px solid var(--border-soft);
+  text-align:center;position:relative;overflow:hidden;
+  transition:background 0.4s;
+}
+.stat:last-child{border-right:none}
+.stat:hover{background:var(--bg3)}
+.stat::after{
+  content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:0;height:1px;background:var(--gold);transition:width 0.5s;
+}
+.stat:hover::after{width:60%}
+.stat-number{
+  font-family:'Playfair Display',serif;
+  font-size:3.2rem;font-weight:500;
+  color:var(--gold);letter-spacing:-0.02em;line-height:1;
+  margin-bottom:0.5rem;
+}
+.stat-label{font-size:0.72rem;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted)}
+
+/* ─────────────────── SERVICES ─────────────────── */
+.services-bg{background:var(--bg)}
+.services-header{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:end;margin-bottom:4rem}
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border-soft)}
+.service-card{
+  background:var(--bg2);padding:2.75rem 2.25rem;
+  position:relative;overflow:hidden;
+  transition:background 0.35s;cursor:default;
+}
+.service-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at var(--mx,50%) var(--my,50%),var(--gold-glow),transparent 65%);
+  opacity:0;transition:opacity 0.4s;pointer-events:none;
+}
+.service-card:hover::before{opacity:1}
+.service-card:hover{background:var(--bg3)}
+.service-icon{
+  width:44px;height:44px;border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:2rem;transition:border-color 0.3s;
+}
+.service-card:hover .service-icon{border-color:var(--gold-dim)}
+.service-icon svg{width:18px;height:18px;stroke:var(--gold-dim);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;transition:stroke 0.3s}
+.service-card:hover .service-icon svg{stroke:var(--gold)}
+.service-card h3{
+  font-family:'Playfair Display',serif;
+  font-size:1.1rem;font-weight:500;color:var(--cream);
+  margin-bottom:0.75rem;letter-spacing:0.01em;
+}
+.service-card p{font-size:0.83rem;font-weight:300;line-height:1.75;color:var(--muted)}
+.service-tag{
+  display:inline-block;margin-top:1.5rem;
+  font-size:0.6rem;font-weight:400;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--gold-dim);border-bottom:1px solid var(--border);padding-bottom:1px;
+  transition:color 0.3s,border-color 0.3s;
+}
+.service-card:hover .service-tag{color:var(--gold);border-color:var(--gold)}
+
+/* ─────────────────── ABOUT / PHILOSOPHY ─────────────────── */
+.about-bg{background:var(--bg2)}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:8rem;align-items:center}
+.about-visual{position:relative}
+.about-frame{
+  border:1px solid var(--border);padding:3rem;
+  background:var(--bg3);position:relative;
+}
+.about-frame::before{
+  content:'';position:absolute;top:-1px;left:3rem;width:80px;height:1px;background:var(--gold);
+}
+.about-quote{
+  font-family:'Playfair Display',serif;font-style:italic;
+  font-size:1.35rem;font-weight:400;line-height:1.6;
+  color:var(--cream);margin-bottom:2rem;
+}
+.about-attr{
+  font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--gold-dim);
+}
+.about-values{display:flex;flex-direction:column;gap:1.5rem;margin-top:3rem}
+.value-item{display:flex;align-items:flex-start;gap:1.25rem}
+.value-dot{
+  width:5px;height:5px;border-radius:50%;background:var(--gold);
+  flex-shrink:0;margin-top:7px;
+}
+.value-text h4{font-size:0.82rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--cream);margin-bottom:0.3rem}
+.value-text p{font-size:0.83rem;font-weight:300;line-height:1.7;color:var(--muted)}
+
+/* ─────────────────── PROCESS ─────────────────── */
+.process-bg{background:var(--bg)}
+.process-steps{display:flex;flex-direction:column;gap:0;margin-top:4rem;max-width:780px}
+.process-step{
+  display:grid;grid-template-columns:80px 1fr;gap:2rem;
+  padding:2.5rem 2rem;border:1px solid var(--border-soft);
+  margin-bottom:-1px;background:var(--bg2);
+  transition:background 0.3s,padding-left 0.35s;
+  cursor:default;
+}
+.process-step:hover{background:var(--bg3);padding-left:2.75rem}
+.step-num{
+  font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:400;
+  color:var(--border);line-height:1;
+  transition:color 0.3s;
+}
+.process-step:hover .step-num{color:var(--gold)}
+.step-content h3{
+  font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:500;
+  color:var(--cream);margin-bottom:0.6rem;letter-spacing:0.01em;
+}
+.step-content p{font-size:0.85rem;font-weight:300;line-height:1.75;color:var(--muted)}
+
+/* ─────────────────── TESTIMONIALS ─────────────────── */
+.testimonials-bg{background:var(--bg2)}
+.testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border-soft);margin-top:4rem}
+.testimonial{background:var(--bg2);padding:2.5rem 2rem;transition:background 0.3s}
+.testimonial:hover{background:var(--bg3)}
+.stars{color:var(--gold);font-size:0.75rem;letter-spacing:3px;margin-bottom:1.5rem}
+.testimonial-text{
+  font-family:'Playfair Display',serif;font-style:italic;
+  font-size:1rem;font-weight:400;line-height:1.7;color:var(--cream);
+  margin-bottom:2rem;
+}
+.testimonial-author{
+  font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);
+  border-top:1px solid var(--border-soft);padding-top:1.25rem;
+}
+.testimonial-author strong{color:var(--cream-dim);font-weight:500}
+
+/* ─────────────────── WHY CHOOSE ─────────────────── */
+.why-bg{background:var(--bg3)}
+.why-grid{display:grid;grid-template-columns:1fr 1fr;gap:8rem;align-items:start;margin-top:4rem}
+.why-list{display:flex;flex-direction:column;gap:2.5rem}
+.why-item{border-left:1px solid var(--border-soft);padding-left:2rem;transition:border-color 0.3s}
+.why-item:hover{border-color:var(--gold)}
+.why-item h3{font-family:'Playfair Display',serif;font-size:1rem;font-weight:500;color:var(--cream);margin-bottom:0.5rem}
+.why-item p{font-size:0.83rem;font-weight:300;line-height:1.75;color:var(--muted)}
+.why-panel{
+  background:var(--bg2);border:1px solid var(--border);
+  padding:3rem;position:relative;
+}
+.why-panel::after{
+  content:'';position:absolute;bottom:0;right:0;
+  width:60px;height:60px;
+  border-bottom:1px solid var(--gold);border-right:1px solid var(--gold);
+}
+.why-panel-title{
+  font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:500;
+  color:var(--cream);margin-bottom:1rem;
+}
+.why-panel p{font-size:0.88rem;font-weight:300;line-height:1.8;color:var(--muted);margin-bottom:2rem}
+.why-accreditations{display:flex;flex-direction:column;gap:1rem;border-top:1px solid var(--border-soft);padding-top:2rem}
+.accred-item{display:flex;align-items:center;gap:10px;font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
+.accred-dot{width:4px;height:4px;border-radius:50%;background:var(--gold);flex-shrink:0}
+
+/* ─────────────────── CONTACT ─────────────────── */
+.contact-bg{background:var(--bg2);border-top:1px solid var(--border-soft)}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:8rem}
+.contact-details{display:flex;flex-direction:column;gap:2.5rem;margin-top:3rem}
+.contact-item{border-left:1px solid var(--border);padding-left:1.75rem}
+.contact-item-label{font-size:0.62rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:0.4rem}
+.contact-item-value{font-size:0.95rem;color:var(--cream-dim)}
+.contact-item-value a{color:var(--cream-dim);text-decoration:none;transition:color 0.2s}
+.contact-item-value a:hover{color:var(--gold)}
+
+/* FORM */
+.form-group{margin-bottom:1.25rem}
+label{display:block;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:0.5rem}
+input,textarea,select{
+  width:100%;background:var(--bg3);
+  border:1px solid var(--border-soft);
+  padding:0.85rem 1rem;
+  font-size:0.88rem;font-weight:300;color:var(--cream);
+  font-family:'DM Sans',sans-serif;
+  outline:none;transition:border-color 0.25s;
+  -webkit-appearance:none;
+}
+input::placeholder,textarea::placeholder{color:var(--muted)}
+input:focus,textarea:focus,select:focus{border-color:var(--gold)}
+select option{background:var(--bg3)}
+textarea{resize:vertical;min-height:110px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.submit-btn{
+  width:100%;padding:1rem;margin-top:0.5rem;
+  font-size:0.78rem;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;
+  background:var(--gold);color:var(--bg);border:none;cursor:pointer;
+  transition:background 0.25s,box-shadow 0.25s;
+  font-family:'DM Sans',sans-serif;
+}
+.submit-btn:hover{background:var(--gold-light);box-shadow:0 8px 32px rgba(201,168,76,0.25)}
+
+/* Form success */
+.form-success{
+  display:none;text-align:center;padding:4rem 2rem;
+  border:1px solid var(--border);background:var(--bg3);
+}
+.form-success-icon{font-size:2rem;margin-bottom:1.5rem}
+.form-success h3{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:500;color:var(--cream);margin-bottom:0.75rem}
+.form-success p{font-size:0.88rem;font-weight:300;line-height:1.75;color:var(--muted)}
+
+/* ─────────────────── FOOTER ─────────────────── */
+footer{
+  background:var(--bg);
+  border-top:1px solid var(--border-soft);
+  padding:3rem 3.5rem;
+}
+.footer-inner{max-width:1160px;margin:0 auto}
+.footer-top{display:flex;align-items:flex-start;justify-content:space-between;gap:2rem;margin-bottom:3rem;flex-wrap:wrap}
+.footer-brand{
+  font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:500;
+  color:var(--cream);letter-spacing:0.04em;margin-bottom:0.5rem;
+}
+.footer-brand span{color:var(--gold)}
+.footer-tagline{font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted)}
+.footer-links{display:flex;gap:2rem;flex-wrap:wrap}
+.footer-link{font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color 0.2s}
+.footer-link:hover{color:var(--gold)}
+.footer-rule{height:1px;background:var(--border-soft);margin-bottom:2rem}
+.footer-legal{font-size:0.72rem;font-weight:300;line-height:1.8;color:var(--muted)}
+
+/* ─────────────────── REVEAL ─────────────────── */
+.reveal{opacity:0;transform:translateY(32px);transition:opacity 0.85s ease,transform 0.85s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal.d1{transition-delay:0.1s}
+.reveal.d2{transition-delay:0.2s}
+.reveal.d3{transition-delay:0.3s}
+.reveal.d4{transition-delay:0.4s}
+
+/* ─────────────────── ANIMATIONS ─────────────────── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+/* ─────────────────── RESPONSIVE ─────────────────── */
+@media(max-width:900px){
+  nav{padding:0 1.5rem}
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .hero{padding:0 1.5rem 5rem}
+  .hero-rule{left:1.5rem}
+  .hero-scroll{right:1.5rem}
+  .section{padding:80px 1.5rem}
+  .services-header{grid-template-columns:1fr;gap:2rem}
+  .services-grid{grid-template-columns:1fr}
+  .about-grid,.why-grid,.contact-grid{grid-template-columns:1fr;gap:4rem}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .stat:nth-child(2){border-right:none}
+  .stat:nth-child(3){border-top:1px solid var(--border-soft)}
+  .testimonials-grid{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+  footer{padding:2.5rem 1.5rem}
+  .footer-top{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<!-- Cursor glow (desktop only) -->
+<div id="glow"></div>
+
+<!-- ── NAV ── -->
+<nav id="navbar">
+  <a class="nav-brand" href="#">J.P. <span>Bergman</span></a>
+  <div class="nav-links" id="nav-links">
+    <a href="#services" class="nav-link">Services</a>
+    <a href="#about" class="nav-link">Philosophy</a>
+    <a href="#process" class="nav-link">Process</a>
+    <a href="#contact" class="nav-link">Contact</a>
+    <a href="#contact" class="nav-cta">Enquire</a>
+  </div>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#services" class="nav-link" onclick="closeMobile()">Services</a>
+  <a href="#about" class="nav-link" onclick="closeMobile()">Philosophy</a>
+  <a href="#process" class="nav-link" onclick="closeMobile()">Process</a>
+  <a href="#contact" class="nav-link" onclick="closeMobile()">Contact</a>
+  <a href="#contact" class="nav-cta" style="text-align:center;margin-top:0.5rem" onclick="closeMobile()">Enquire</a>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-rule"></div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">
+      <span class="eyebrow-line"></span>
+      Independent Mortgage Broker · Melbourne, Victoria
+    </div>
+    <h1>
+      Finance structured<br>
+      around <em>your</em> position.<br>
+      Not theirs.
+    </h1>
+    <p class="hero-sub">
+      J.P. Bergman provides bespoke mortgage broking to Melbourne's discerning clients. Independent, unconflicted, and accountable — to you alone.
+    </p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn-primary">Request a Consultation</a>
+      <a href="#services" class="btn-secondary">View Services</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <span class="scroll-line"></span>
+    Scroll to explore
+  </div>
+</section>
+
+<!-- ── TICKER ── -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="ticker-item">Residential Finance <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Refinancing &amp; Restructure <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Investment Lending <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Commercial Finance <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Construction Loans <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">SMSF Lending <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">40+ Lender Panel <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">MFAA Member <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Residential Finance <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Refinancing &amp; Restructure <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Investment Lending <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Commercial Finance <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Construction Loans <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">SMSF Lending <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">40+ Lender Panel <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">MFAA Member <span class="ticker-sep">◆</span></span>
+  </div>
+</div>
+
+<!-- ── STATS ── -->
+<div class="stats-bg">
+  <div class="stats-grid">
+    <div class="stat reveal">
+      <div class="stat-number" data-target="500" data-suffix="+">0</div>
+      <div class="stat-label">Loans Settled</div>
+    </div>
+    <div class="stat reveal d1">
+      <div class="stat-number" data-target="350" data-prefix="$" data-suffix="M+">0</div>
+      <div class="stat-label">Finance Arranged</div>
+    </div>
+    <div class="stat reveal d2">
+      <div class="stat-number" data-target="40" data-suffix="+">0</div>
+      <div class="stat-label">Lender Panel</div>
+    </div>
+    <div class="stat reveal d3">
+      <div class="stat-number" data-target="98" data-suffix="%">0</div>
+      <div class="stat-label">Client Satisfaction</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SERVICES ── -->
+<section class="section services-bg" id="services">
+  <div class="section-inner">
+    <div class="services-header">
+      <div>
+        <p class="section-label reveal">What We Arrange</p>
+        <h2 class="section-h2 reveal d1">A full suite of<br>lending <em>solutions.</em></h2>
+      </div>
+      <p class="section-body reveal d2">From first home to fourth investment property, from personal residence to commercial portfolio — structured with precision and placed with the right lender at the right rate.</p>
+    </div>
+    <div class="services-grid">
+
+      <div class="service-card reveal">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <h3>Residential Finance</h3>
+        <p>Owner-occupied lending for principal place of residence — from first home buyers to established borrowers seeking premium terms across the major and non-major lender landscape.</p>
+        <span class="service-tag">Owner-Occupied</span>
+      </div>
+
+      <div class="service-card reveal d1">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+        </div>
+        <h3>Refinancing &amp; Restructure</h3>
+        <p>Existing debt reviewed with forensic attention to rate, structure, and serviceability. Clients consistently present savings of 40 to 120 basis points through active management.</p>
+        <span class="service-tag">Rate Review</span>
+      </div>
+
+      <div class="service-card reveal d2">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        </div>
+        <h3>Investment Lending</h3>
+        <p>Residential and commercial investment finance. Portfolio structuring to preserve borrowing capacity, asset protection strategies, and lender selection calibrated to growth objectives.</p>
+        <span class="service-tag">Portfolio Growth</span>
+      </div>
+
+      <div class="service-card reveal">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <h3>Commercial Finance</h3>
+        <p>Business premises, commercial property acquisition, and asset-backed lending. Relationships with specialist commercial lenders beyond the standard retail banking panel.</p>
+        <span class="service-tag">Business Lending</span>
+      </div>
+
+      <div class="service-card reveal d1">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        </div>
+        <h3>Construction Loans</h3>
+        <p>Progressive drawdown facilities for new builds, substantial renovations, and development projects. Coordination with builders, valuers, and lenders throughout the construction timeline.</p>
+        <span class="service-tag">New Build</span>
+      </div>
+
+      <div class="service-card reveal d2">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>SMSF Lending</h3>
+        <p>Superannuation fund borrowing arrangements for property acquisition. Specialist lenders navigated with compliant limited recourse borrowing structures in coordination with your SMSF trustee.</p>
+        <span class="service-tag">Superannuation</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section class="section about-bg" id="about">
+  <div class="section-inner">
+    <div class="about-grid">
+      <div class="about-visual reveal">
+        <div class="about-frame">
+          <p class="about-quote">"The broker's role is not to sell a product. It is to understand a position, then find the instrument that serves it best."</p>
+          <p class="about-attr">— J.P. Bergman, Founding Principal</p>
+        </div>
+        <div class="about-values">
+          <div class="value-item">
+            <div class="value-dot"></div>
+            <div class="value-text">
+              <h4>Independence</h4>
+              <p>No ownership by banks, no volume bonuses, no preferred lender arrangements. Recommendations made on merit alone.</p>
+            </div>
+          </div>
+          <div class="value-item">
+            <div class="value-dot"></div>
+            <div class="value-text">
+              <h4>Discretion</h4>
+              <p>Client affairs are handled with the same confidentiality expected of a private banking relationship.</p>
+            </div>
+          </div>
+          <div class="value-item">
+            <div class="value-dot"></div>
+            <div class="value-text">
+              <h4>Accountability</h4>
+              <p>You deal directly with the principal. Not a team, not a call centre — a single point of contact, always.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="reveal d2">
+        <p class="section-label">Firm Philosophy</p>
+        <h2 class="section-h2">Mortgage broking<br>practised with<br><em>genuine independence.</em></h2>
+        <p class="section-body">J.P. Bergman was established on the premise that most Australians receive mortgage advice shaped by the broker's commercial interests rather than their own. This firm operates differently.</p>
+        <br>
+        <p class="section-body">With access to a panel of more than forty lenders — spanning major banks, mutual institutions, and non-bank specialists — every engagement begins with your balance sheet, your objectives, and your timeline. Not a product shelf.</p>
+        <br>
+        <p class="section-body">The practice is small by design. Selectivity in clientele permits depth of service that volume-driven operations cannot replicate.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PROCESS ── -->
+<section class="section process-bg" id="process">
+  <div class="section-inner">
+    <p class="section-label reveal">How We Work</p>
+    <h2 class="section-h2 reveal d1">A structured approach<br>from first call to <em>settlement.</em></h2>
+    <div class="process-steps">
+      <div class="process-step reveal d1">
+        <div class="step-num">01</div>
+        <div class="step-content">
+          <h3>Discovery &amp; Assessment</h3>
+          <p>An initial consultation to understand your financial position, objectives, and timeframe in full. No credit enquiries at this stage. This conversation determines strategy before any lender is approached.</p>
+        </div>
+      </div>
+      <div class="process-step reveal d2">
+        <div class="step-num">02</div>
+        <div class="step-content">
+          <h3>Lender Selection &amp; Structuring</h3>
+          <p>Your file is assessed against the lending criteria of suitable institutions. Rate is only one variable — serviceability treatment, policy flexibility, and approval timeframes are weighted equally.</p>
+        </div>
+      </div>
+      <div class="process-step reveal d3">
+        <div class="step-num">03</div>
+        <div class="step-content">
+          <h3>Application &amp; Negotiation</h3>
+          <p>Documentation collated, application submitted, and rate negotiation conducted on your behalf. Direct lender relationships allow access to pricing not available through standard lodgement channels.</p>
+        </div>
+      </div>
+      <div class="process-step reveal d4">
+        <div class="step-num">04</div>
+        <div class="step-content">
+          <h3>Settlement &amp; Ongoing Review</h3>
+          <p>Full coordination through to settlement. Post-settlement, your loan is monitored annually against current market conditions. Rate complacency costs most borrowers — this practice prevents it.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TESTIMONIALS ── -->
+<section class="section testimonials-bg">
+  <div class="section-inner">
+    <p class="section-label reveal">Client Accounts</p>
+    <h2 class="section-h2 reveal d1">In their <em>own words.</em></h2>
+    <div class="testimonials-grid">
+      <div class="testimonial reveal d1">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"James came recommended by our accountant and delivered precisely what was described — a competitive rate, a clean process, and no surprises. Refinanced from our existing bank and saved $430 per month."</p>
+        <div class="testimonial-author"><strong>Michael &amp; Claire D.</strong> — Toorak, VIC · Owner-Occupied Refinance</div>
+      </div>
+      <div class="testimonial reveal d2">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"Our investment portfolio had grown to the point where our previous broker struggled to navigate the complexity. J.P. Bergman restructured three loans simultaneously and preserved our borrowing capacity for the next acquisition."</p>
+        <div class="testimonial-author"><strong>Robert A.</strong> — South Yarra, VIC · Investment Portfolio</div>
+      </div>
+      <div class="testimonial reveal d3">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"The SMSF lending space is opaque and most brokers avoid it. James knew it precisely — the lender, the structure, the trustee requirements. Settlement occurred within six weeks of our first meeting."</p>
+        <div class="testimonial-author"><strong>Dr. Sandra K.</strong> — Brighton, VIC · SMSF Property Acquisition</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── WHY CHOOSE ── -->
+<section class="section why-bg">
+  <div class="section-inner">
+    <p class="section-label reveal">Why J.P. Bergman</p>
+    <h2 class="section-h2 reveal d1">What separates an<br>adviser from a <em>broker.</em></h2>
+    <div class="why-grid">
+      <div class="why-list">
+        <div class="why-item reveal d1">
+          <h3>Access to the Full Market</h3>
+          <p>More than forty lenders on panel, including specialist non-bank institutions that offer structures the major banks will not consider. Your options are not limited by a restricted panel.</p>
+        </div>
+        <div class="why-item reveal d2">
+          <h3>No Preferred Lender Volume Agreements</h3>
+          <p>This practice has no commercial arrangements that incentivise placing loans with particular lenders. Recommendations are made on the objective merits of your situation.</p>
+        </div>
+        <div class="why-item reveal d3">
+          <h3>Direct Access to the Principal</h3>
+          <p>Every client communicates directly with James Bergman. No handoffs, no junior brokers, no service teams. The person who assesses your file is the person who settles it.</p>
+        </div>
+        <div class="why-item reveal d4">
+          <h3>Ongoing Rate Management</h3>
+          <p>Most borrowers pay a loyalty tax after their fixed rate expires. An annual review process ensures existing clients remain on competitive terms without having to ask.</p>
+        </div>
+      </div>
+      <div class="why-panel reveal d2">
+        <h3 class="why-panel-title">Regulated, Qualified, Accountable.</h3>
+        <p>J.P. Bergman operates under an Australian Credit Licence and is bound by responsible lending obligations under the National Consumer Credit Protection Act. Full MFAA membership and adherence to the industry code of practice.</p>
+        <div class="why-accreditations">
+          <div class="accred-item"><span class="accred-dot"></span>Australian Credit Licence (ACL) Holder</div>
+          <div class="accred-item"><span class="accred-dot"></span>MFAA Member — Mortgage &amp; Finance Association</div>
+          <div class="accred-item"><span class="accred-dot"></span>NCCP Act Compliant — Responsible Lending Obligations</div>
+          <div class="accred-item"><span class="accred-dot"></span>Privacy Act Compliant — APP Entity</div>
+          <div class="accred-item"><span class="accred-dot"></span>External Dispute Resolution — AFCA Member</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ── -->
+<section class="section contact-bg" id="contact">
+  <div class="section-inner">
+    <div class="contact-grid">
+      <div>
+        <p class="section-label reveal">Get in Touch</p>
+        <h2 class="section-h2 reveal d1">Begin a<br><em>confidential</em><br>conversation.</h2>
+        <p class="section-body reveal d2" style="margin-bottom:0">Enquiries are handled personally and returned within one business day. Initial consultations are available by telephone, video, or at our Melbourne office.</p>
+        <div class="contact-details reveal d3">
+          <div class="contact-item">
+            <div class="contact-item-label">Telephone</div>
+            <div class="contact-item-value"><a href="tel:+61300000000">+61 3 0000 0000</a></div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-item-label">Email</div>
+            <div class="contact-item-value"><a href="mailto:james@jpbergman.com.au">james@jpbergman.com.au</a></div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-item-label">Location</div>
+            <div class="contact-item-value">Melbourne, Victoria · Australia<br><span style="font-size:0.8rem;color:var(--muted)">By appointment only</span></div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-item-label">Office Hours</div>
+            <div class="contact-item-value">Monday – Friday, 8:30 am – 6:00 pm<br><span style="font-size:0.8rem;color:var(--muted)">Saturday by prior arrangement</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal d2">
+        <div id="contact-form-wrap">
+          <form id="contact-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label>First Name</label>
+                <input type="text" placeholder="James" required>
+              </div>
+              <div class="form-group">
+                <label>Last Name</label>
+                <input type="text" placeholder="Anderson" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" placeholder="james@example.com" required>
+            </div>
+            <div class="form-group">
+              <label>Phone Number</label>
+              <input type="tel" placeholder="+61 4XX XXX XXX">
+            </div>
+            <div class="form-group">
+              <label>Nature of Enquiry</label>
+              <select required>
+                <option value="" disabled selected>Select a service area</option>
+                <option>Residential Finance — Purchase</option>
+                <option>Residential Finance — Owner-Occupied</option>
+                <option>Refinancing &amp; Rate Review</option>
+                <option>Investment Lending</option>
+                <option>Commercial Finance</option>
+                <option>Construction Loan</option>
+                <option>SMSF Lending</option>
+                <option>General Enquiry</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Brief Overview</label>
+              <textarea placeholder="A brief description of your situation, loan amount in mind, and timeframe if applicable…"></textarea>
+            </div>
+            <button type="submit" class="submit-btn">Submit Enquiry</button>
+          </form>
+        </div>
+        <div class="form-success" id="form-success">
+          <div class="form-success-icon">◆</div>
+          <h3>Enquiry Received</h3>
+          <p>Thank you for reaching out. Your enquiry has been noted and James will be in contact within one business day to arrange an initial consultation at your convenience.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand">J.P. <span>Bergman</span></div>
+        <div class="footer-tagline">Independent Mortgage Broker · Melbourne</div>
+      </div>
+      <div class="footer-links">
+        <a href="#services" class="footer-link">Services</a>
+        <a href="#about" class="footer-link">Philosophy</a>
+        <a href="#process" class="footer-link">Process</a>
+        <a href="#contact" class="footer-link">Contact</a>
+      </div>
+    </div>
+    <div class="footer-rule"></div>
+    <p class="footer-legal">
+      J.P. Bergman is a credit representative of [Aggregator Name] Pty Ltd (ACL: XXXXXX). J.P. Bergman is a member of the Mortgage &amp; Finance Association of Australia (MFAA). Credit services are provided subject to the lender's terms, conditions, and lending criteria. The information on this website is general in nature and does not constitute financial advice. You should consider your own circumstances and, if necessary, seek independent legal, financial, tax, or other advice before acting on any information contained herein. J.P. Bergman is a member of the Australian Financial Complaints Authority (AFCA). A copy of our Credit Guide and Privacy Policy is available upon request.
+      <br><br>
+      © 2026 J.P. Bergman. All rights reserved. ABN: XX XXX XXX XXX · Melbourne, Victoria, Australia.
+    </p>
+  </div>
+</footer>
+
+<script>
+// ── CURSOR GLOW ──
+const glow = document.getElementById('glow');
+document.addEventListener('mousemove', e => {
+  glow.style.left = e.clientX + 'px';
+  glow.style.top = e.clientY + 'px';
+});
+
+// ── NAV SCROLL ──
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// ── MOBILE MENU ──
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobile-menu');
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('open');
+  mobileMenu.classList.toggle('open');
+});
+function closeMobile() {
+  hamburger.classList.remove('open');
+  mobileMenu.classList.remove('open');
+}
+
+// ── SCROLL REVEAL ──
+const revealEls = document.querySelectorAll('.reveal');
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      revealObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+revealEls.forEach(r => revealObs.observe(r));
+
+// ── STAT COUNTERS ──
+function animateCounter(el) {
+  const target = parseInt(el.dataset.target);
+  const prefix = el.dataset.prefix || '';
+  const suffix = el.dataset.suffix || '';
+  let current = 0;
+  const duration = 1800;
+  const start = performance.now();
+  function step(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    current = Math.floor(eased * target);
+    el.textContent = prefix + current + suffix;
+    if (progress < 1) requestAnimationFrame(step);
+    else el.textContent = prefix + target + suffix;
+  }
+  requestAnimationFrame(step);
+}
+const statObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const num = e.target.querySelector('.stat-number[data-target]');
+      if (num) animateCounter(num);
+      statObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('.stat').forEach(s => statObs.observe(s));
+
+// ── SERVICE CARD RADIAL HOVER ──
+document.querySelectorAll('.service-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const rect = card.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
+    const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(1);
+    card.style.setProperty('--mx', x + '%');
+    card.style.setProperty('--my', y + '%');
+  });
+});
+
+// ── CONTACT FORM ──
+document.getElementById('contact-form').addEventListener('submit', e => {
+  e.preventDefault();
+  document.getElementById('contact-form-wrap').style.display = 'none';
+  const success = document.getElementById('form-success');
+  success.style.display = 'block';
+  success.style.opacity = '0';
+  success.style.transform = 'translateY(20px)';
+  setTimeout(() => {
+    success.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    success.style.opacity = '1';
+    success.style.transform = 'translateY(0)';
+  }, 50);
+});
+</script>
+</body>
+</html>
